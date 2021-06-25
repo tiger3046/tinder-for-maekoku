@@ -1,0 +1,28 @@
+services:
+    app:
+        build: ./infra/php
+        volumes:
+            - ./Tinder-for-maekoku:/work
+
+    web:
+        image: nginx:1.20-alpine
+        ports:
+            - 8080:80
+        volumes:
+            - ./Tinder-for-maekoku:/work
+            - ./infra/nginx/default.conf:/etc/nginx/conf.d/default.conf
+        working_dir: /work
+
+    db:
+        build: ./infra/mysql
+        volumes:
+            - db-store:/var/lib/mysql
+        environment: 
+            - MYSQL_ROOT_PASSWORD=root
+            - MYSQL_DATABASE=tinder-for-maekoku
+            - MYSQL_USER=tinder-for-maekoku
+            - MYSQL_PASSWORD=secret
+            - TZ=${TZ}
+
+volumes:
+    db-store:
